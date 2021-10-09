@@ -56,3 +56,21 @@ size_t len;
 
 // and this: "def_len(float, 320.2)", gives:
 float len = 320.2;
+
+/**
+ * Since some of this features are compile exlusive we should use them with care.
+ * The __VA_OPT__ macro is specially dangerous and can be check at compiled time
+ * with this macro:
+ */
+
+// if __VA_OPT__ is supported by the toolchain true will be the third argument on PP_THIRD_ARG()
+// thus VA_OPT_SUPPORTED will be true 
+#define PP_THIRD_ARG(a,b,c,...) c
+#define VA_OPT_SUPPORTED_I(...) PP_THIRD_ARG(__VA_OPT__(,),true,false,)
+#define VA_OPT_SUPPORTED VA_OPT_SUPPORTED_I(?)
+
+
+// we can them use a if case to throw an error at compile time
+#if !VA_OPT_SUPPORTED
+    #error "__VA_OPT__" is not support on your toolchain, give up :( 
+#endif
